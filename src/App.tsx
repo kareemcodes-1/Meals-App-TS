@@ -1,13 +1,9 @@
-import ExpenseTracker from "./components/ExpenseTracker"
-import { useStore } from "./store/useStore"
-
+import Meals from "./components/Meals"
 
 function App() {
-
-
   return (
     <>
-    <ExpenseTracker />
+       <Meals />
     </>
   )
 }

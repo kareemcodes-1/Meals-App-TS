@@ -1,59 +1,33 @@
 import { create } from "zustand";
 
-export type Expense = {
-    id: number,
-    description: string;
-    amount: number;
+export type Meal = {
+    id: string;
+    strMeal: string;
+    strMealThumb: string
 }
 
-type StoreInitialValues = {
-    expenses: Expense[];
-    addExpense: (expense: Expense) => void;
-    addAmount: (amount: number) => void;
-    totalAmount: number;
-    deleteExpense: (id: number, amount: number) => void;
+type State = {
+    meals: Meal[],
+    originalMeals: Meal[],
+    setMeals: (meals: Meal[]) => void;
+    searchFood: (value: string) => void;
 }
 
 
-const storedExpenses = localStorage.getItem('expenses');
-const totalAmount = localStorage.getItem('totalAmount');
-export const useStore = create<StoreInitialValues>((set) => ({
-    expenses: storedExpenses ? JSON.parse(storedExpenses) : [],
-    totalAmount: totalAmount ? JSON.parse(totalAmount) : 0,
-    addExpense(expense) {
-        return set((state) => {
-            const createdExpense = [...state.expenses, expense];
-            localStorage.setItem('expenses', JSON.stringify(createdExpense))
-            return {...state, expenses: createdExpense}
-        })
-    },
-    addAmount: (amount) => {
-        return set((state) => {
-
-            const addedAmount = state.totalAmount += amount;
-            localStorage.setItem('totalAmount', JSON.stringify(addedAmount));
-
-           return {
+export const useStore = create<State>((set) => ({
+    meals: [],
+    originalMeals: [],
+    setMeals(meals) {
+        return set((state) => ({
             ...state,
-            totalAmount: addedAmount,
-            }
-    })
+            meals: [...meals],
+            originalMeals: [...meals],
+        }))
     },
-    deleteExpense(id, amount) {
-        return set((state) => {
-            const updatedExpenses = state.expenses.filter((expense) => expense.id !== id);
-
-            const updatedTotalAmount = state.totalAmount - amount;
-
-            localStorage.setItem('expenses', JSON.stringify(updatedExpenses));
-            localStorage.setItem('totalAmount', JSON.stringify(updatedTotalAmount));
-
-
-            return {
+    searchFood(value){
+        return set((state) => ({
             ...state,
-            expenses: updatedExpenses,
-            totalAmount: updatedTotalAmount
-            }
-     });
-    },
-}));
+            meals: state.originalMeals.filter((meal) => meal.strMeal.toLowerCase().includes(value.toLowerCase())),
+        }))
+    }
+}))
